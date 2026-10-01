@@ -140,6 +140,12 @@
     padding: 5px 6px; border-radius: 6px; border: 1px solid #cfc4ae;
     max-width: 110px;
   }
+  .song .ytlink {
+    font-family: 'Segoe UI', Arial, sans-serif; font-size: 0.75rem;
+    color: #8a6d1d; text-decoration: none; border: 1px solid #d9c48a;
+    border-radius: 6px; padding: 4px 7px; white-space: nowrap;
+  }
+  .song .ytlink:hover { background: #fdf3d8; }
   .board-form {
     display: flex; flex-wrap: wrap; gap: 10px; margin: 14px 0 18px;
     font-family: 'Segoe UI', Arial, sans-serif;
@@ -440,7 +446,9 @@ function renderSongs(filter = "") {
       localStorage.setItem(CLAIM_KEY, JSON.stringify(claims));
       renderSongs(document.getElementById("songSearch").value);
     });
-    div.innerHTML = `<span class="num">${i + 1}</span><div class="meta"><div class="title">${title}</div><div class="artist">${artist}</div></div>`;
+    div.innerHTML = `<span class="num">${i + 1}</span><div class="meta"><div class="title">${title}</div><div class="artist">${artist}</div></div>
+      <a class="ytlink" target="_blank" title="Find karaoke versions on YouTube"
+         href="https://www.youtube.com/results?search_query=${encodeURIComponent(title + " " + artist + " karaoke")}">Karaoke&nbsp;&#8599;</a>`;
     div.appendChild(sel);
     songList.appendChild(div);
   });
