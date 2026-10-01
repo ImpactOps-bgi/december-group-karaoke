@@ -283,8 +283,8 @@
         <option value="Group">Division: Group / Choir</option>
       </select>
       <input type="text" id="bSong" placeholder="Song (optional)" size="22">
-      <input type="number" id="bJudges" placeholder="Judges /100" min="0" max="100" style="width:110px">
-      <input type="number" id="bVotes" placeholder="Vote tickets" min="0" style="width:120px">
+      <input type="number" inputmode="numeric" id="bJudges" placeholder="Judges /100" min="0" max="100" step="1" style="width:110px">
+      <input type="number" inputmode="numeric" id="bVotes" placeholder="Vote tickets" min="0" step="1" style="width:120px">
       <button id="bAdd">Add performance</button>
     </div>
     <table class="board" id="perfTable">
@@ -446,7 +446,7 @@ function wireAdv(id, key, def) {
   const el = document.getElementById(id);
   el.value = def;
   el.addEventListener("change", () => {
-    const v = Math.max(1, Math.min(12, parseInt(el.value) || def));
+    const v = Math.max(1, Math.min(12, parseInt(el.value.replace(/\D/g, "")) || def));
     el.value = v;
     adv[key] = v;
     localStorage.setItem(ADV_KEY, JSON.stringify(adv));
@@ -534,8 +534,8 @@ function saveBoard() {
 }
 
 document.getElementById("bAdd").addEventListener("click", () => {
-  const votes = parseInt(document.getElementById("bVotes").value) || 0;
-  const judges = parseInt(document.getElementById("bJudges").value) || 0;
+  const votes = parseInt(document.getElementById("bVotes").value.replace(/\D/g, "")) || 0;
+  const judges = Math.min(100, parseInt(document.getElementById("bJudges").value.replace(/\D/g, "")) || 0);
   perfs.push({
     round: document.getElementById("bRound").value,
     month: bMonth.value,
