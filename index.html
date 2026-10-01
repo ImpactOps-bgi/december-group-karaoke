@@ -1,0 +1,584 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Battle of the Birth Months — Gospel Karaoke Fundraiser</title>
+<style>
+  :root {
+    --purple: #2d1b4e;
+    --purple-2: #3d2566;
+    --gold: #e8b84b;
+    --gold-2: #f4d47c;
+    --cream: #faf6ee;
+    --ink: #2a2438;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: Georgia, 'Times New Roman', serif;
+    background: var(--cream);
+    color: var(--ink);
+    line-height: 1.55;
+  }
+  .hero {
+    background: linear-gradient(160deg, var(--purple) 0%, var(--purple-2) 60%, #4a2f7a 100%);
+    color: var(--cream);
+    text-align: center;
+    padding: 64px 20px 56px;
+  }
+  .hero .kicker {
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    font-size: 0.85rem;
+    color: var(--gold);
+    font-family: 'Segoe UI', Arial, sans-serif;
+  }
+  .hero h1 {
+    font-size: clamp(2.2rem, 6vw, 4rem);
+    margin: 14px 0 8px;
+    color: var(--gold-2);
+  }
+  .hero .sub {
+    font-size: 1.25rem;
+    font-style: italic;
+    opacity: 0.92;
+  }
+  .hero .when {
+    margin-top: 26px;
+    display: inline-block;
+    border: 1px solid var(--gold);
+    border-radius: 999px;
+    padding: 10px 28px;
+    font-family: 'Segoe UI', Arial, sans-serif;
+    font-size: 0.95rem;
+    letter-spacing: 1px;
+  }
+  .wrap { max-width: 1080px; margin: 0 auto; padding: 0 20px; }
+  section { padding: 48px 0 8px; }
+  h2 {
+    font-size: 1.8rem;
+    color: var(--purple);
+    margin-bottom: 6px;
+  }
+  h2 .rule { display: block; width: 64px; height: 4px; background: var(--gold); border-radius: 2px; margin-top: 10px; }
+  .lead { color: #5a5470; margin-bottom: 22px; max-width: 720px; }
+  .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 18px; }
+  .card {
+    background: #fff;
+    border: 1px solid #e5ddcd;
+    border-top: 4px solid var(--gold);
+    border-radius: 10px;
+    padding: 22px;
+    box-shadow: 0 2px 8px rgba(45,27,78,.06);
+  }
+  .card h3 { color: var(--purple); margin-bottom: 8px; font-size: 1.15rem; }
+  .card ul { margin-left: 18px; }
+  .card li { margin: 5px 0; font-size: 0.95rem; }
+  table.fees, table.board {
+    width: 100%;
+    border-collapse: collapse;
+    background: #fff;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(45,27,78,.06);
+    font-family: 'Segoe UI', Arial, sans-serif;
+    font-size: 0.95rem;
+  }
+  table.fees th, table.board th {
+    background: var(--purple);
+    color: var(--gold-2);
+    text-align: left;
+    padding: 12px 14px;
+    font-weight: 600;
+  }
+  table.fees td, table.board td { padding: 11px 14px; border-top: 1px solid #ece5d6; }
+  table.fees tr:nth-child(even) td, table.board tr:nth-child(even) td { background: #fdfaf3; }
+  .callout {
+    background: var(--purple);
+    color: var(--cream);
+    border-radius: 12px;
+    padding: 28px;
+    margin-top: 10px;
+  }
+  .callout h3 { color: var(--gold-2); margin-bottom: 10px; }
+  .callout ol { margin-left: 20px; }
+  .callout li { margin: 8px 0; }
+  .toolbar {
+    display: flex; flex-wrap: wrap; gap: 10px; align-items: center;
+    margin-bottom: 16px; font-family: 'Segoe UI', Arial, sans-serif;
+  }
+  .toolbar input[type="search"], .toolbar select, .board-form input, .board-form select {
+    font-family: 'Segoe UI', Arial, sans-serif;
+    font-size: 0.95rem;
+    padding: 9px 12px;
+    border: 1px solid #cfc4ae;
+    border-radius: 8px;
+    background: #fff;
+  }
+  .toolbar input[type="search"] { flex: 1; min-width: 220px; }
+  .pill {
+    font-family: 'Segoe UI', Arial, sans-serif; font-size: 0.8rem;
+    background: var(--purple); color: var(--gold-2);
+    padding: 6px 12px; border-radius: 999px;
+  }
+  .songs { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 10px; }
+  .song {
+    display: flex; align-items: center; gap: 10px;
+    background: #fff; border: 1px solid #e5ddcd; border-radius: 8px;
+    padding: 10px 12px;
+  }
+  .song.claimed { border-color: var(--gold); background: #fffaf0; }
+  .song .num {
+    font-family: 'Segoe UI', Arial, sans-serif; font-size: 0.75rem;
+    color: #9a8fb5; width: 24px; flex-shrink: 0;
+  }
+  .song .meta { flex: 1; min-width: 0; }
+  .song .title { font-weight: 700; font-size: 0.95rem; color: var(--purple); }
+  .song .artist { font-size: 0.82rem; color: #6f6690; font-family: 'Segoe UI', Arial, sans-serif; }
+  .song select {
+    font-family: 'Segoe UI', Arial, sans-serif; font-size: 0.8rem;
+    padding: 5px 6px; border-radius: 6px; border: 1px solid #cfc4ae;
+    max-width: 110px;
+  }
+  .board-form {
+    display: flex; flex-wrap: wrap; gap: 10px; margin: 14px 0 18px;
+    font-family: 'Segoe UI', Arial, sans-serif;
+  }
+  .board-form button, .btn {
+    font-family: 'Segoe UI', Arial, sans-serif; font-size: 0.9rem;
+    background: var(--purple); color: var(--gold-2);
+    border: none; border-radius: 8px; padding: 10px 18px; cursor: pointer;
+  }
+  .btn.ghost { background: transparent; color: var(--purple); border: 1px solid var(--purple); }
+  .board-form button:hover, .btn:hover { opacity: 0.88; }
+  .del { color: #a33; cursor: pointer; border: none; background: none; font-size: 1rem; }
+  .winner { color: #b8860b; font-weight: 700; }
+  .roundBoards { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 16px; }
+  tr.advance td { background: #fff3d6; }
+  tr.advance td:first-child { box-shadow: inset 4px 0 0 var(--gold); }
+  .note { font-size: 0.85rem; color: #7a7290; font-family: 'Segoe UI', Arial, sans-serif; margin-top: 10px; }
+  footer {
+    margin-top: 60px; background: var(--purple); color: var(--cream);
+    text-align: center; padding: 30px 20px; font-size: 0.9rem;
+  }
+  footer span { color: var(--gold-2); }
+  h3.standings { margin: 26px 0 8px; color: var(--purple); font-size: 1.15rem; }
+  .regtbl td { height: 36px; }
+  .regtbl .chk { font-family: 'Segoe UI', Arial, sans-serif; font-size: 0.85rem; white-space: nowrap; }
+  @media print {
+    .toolbar, .board-form, .del, footer { display: none; }
+    .hero { padding: 24px; }
+    section { padding: 18px 0 4px; }
+    body.regonly .hero, body.regonly section, body.regonly footer { display: none; }
+    body.regonly section#registration { display: block; }
+    body.regonly section#registration .toolbar { display: none; }
+  }
+  @page registration { size: landscape; }
+  section#registration { page: registration; }
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <div class="kicker">The December Group presents</div>
+  <h1>Battle of the Birth Months</h1>
+  <div class="sub">A Gospel Karaoke Fundraiser &mdash; Solo &amp; Choir Showdown</div>
+  <div class="when">[DATE &amp; TIME] &nbsp;&bull;&nbsp; [VENUE] &nbsp;&bull;&nbsp; $5 Admission</div>
+</header>
+
+<div class="wrap">
+
+  <section id="how">
+    <h2>How It Works<span class="rule"></span></h2>
+    <p class="lead">Twelve teams, one for every birth month. Each team enters the stage in two categories &mdash; a solo artist and a group/choir &mdash; and the audience decides who takes the crown, one dollar-vote at a time.</p>
+    <div class="cards">
+      <div class="card">
+        <h3>The Teams</h3>
+        <ul>
+          <li>Your birth month is your team. Team up with everyone born in the same month.</li>
+          <li>Each month fields <strong>one act</strong> &mdash; either a <strong>solo artist</strong> or a <strong>group/choir</strong> (2 or more singers). Choose wisely!</li>
+          <li>Songs are claimed first-come, first-served from the official 50-song playlist below.</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>The Rounds</h3>
+        <ul>
+          <li><strong>Round 1 &mdash; Preliminaries:</strong> every month's act performs once.</li>
+          <li><strong>Round 2 &mdash; Semifinals:</strong> the top 6 advance with a new song.</li>
+          <li><strong>Round 3 &mdash; Finals:</strong> the top 3 battle for the crown.</li>
+          <li>Vote totals reset each round &mdash; fresh tickets, fresh fundraising.</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>The Prizes</h3>
+        <ul>
+          <li><strong>Grand Champion Month</strong> &mdash; the finals winner.</li>
+          <li><strong>Best Solo</strong> and <strong>Best Group</strong> &mdash; top-scoring act of each division in the finals.</li>
+          <li>Trophies, bragging rights for the whole year, and glory for your birth month.</li>
+          <li>Every dollar raised supports The December Group's mission.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section id="fees">
+    <h2>Entry Fees<span class="rule"></span></h2>
+    <p class="lead">Get in the door, get on the stage.</p>
+    <table class="fees">
+      <tr><th>Item</th><th>Cost</th><th>Notes</th></tr>
+      <tr><td>General admission</td><td>$5 per person</td><td>Sold in advance and at the door</td></tr>
+      <tr><td>Competition entry</td><td>$10 per month</td><td>Each month fields one act &mdash; solo artist or group/choir</td></tr>
+      <tr><td>Vote tickets</td><td>$1 each</td><td>Buy at the door; more detail below</td></tr>
+    </table>
+  </section>
+
+  <section id="voting">
+    <h2>Voting: Where the Fundraising Happens<span class="rule"></span></h2>
+    <p class="lead">Applause is free &mdash; but votes are a dollar, and every vote counts.</p>
+    <div class="callout">
+      <h3>Audience vote tickets</h3>
+      <ol>
+        <li><strong>Buy vote tickets</strong> at the door or during the show &mdash; $1 each, buy as many as you like.</li>
+        <li><strong>After each performance</strong>, a basket is passed through the audience.</li>
+        <li><strong>Drop tickets in the basket</strong> for the act that just performed &mdash; each ticket is a $1 vote for that month.</li>
+        <li><strong>Tickets are counted live</strong> on the tally board below. Highest totals win each category.</li>
+      </ol>
+    </div>
+  </section>
+
+  <section id="playlist">
+    <h2>The Official Playlist &mdash; 50 Songs<span class="rule"></span></h2>
+    <p class="lead">Each team picks its songs on signup. Songs are first-come, first-served &mdash; once a month claims it, it's theirs. Use the selectors to record which month has claimed each song.</p>
+    <div class="toolbar">
+      <input type="search" id="songSearch" placeholder="Search songs or artists...">
+      <span class="pill" id="claimCount">0 / 50 claimed</span>
+      <button class="btn ghost" id="clearClaims">Clear all claims</button>
+    </div>
+    <div class="songs" id="songList"></div>
+  </section>
+
+  <section id="judging">
+    <h2>Judges' Scorecard<span class="rule"></span></h2>
+    <p class="lead">Judges score every act out of 100. Suggested rubric:</p>
+    <table class="fees">
+      <tr><th>Criteria</th><th>Points</th><th>What to look for</th></tr>
+      <tr><td>Vocal performance</td><td>40</td><td>Pitch, control, power, harmony (for groups)</td></tr>
+      <tr><td>Stage presence</td><td>30</td><td>Confidence, movement, connection with the song</td></tr>
+      <tr><td>Crowd engagement</td><td>30</td><td>Did the room feel it? Energy, participation, joy</td></tr>
+    </table>
+  </section>
+
+  <section id="board">
+    <h2>Live Tally Board<span class="rule"></span></h2>
+    <p class="lead">During the show: pick the round, after the basket passes count the tickets, and log the performance. Standings update automatically and highlight which acts advance to the next round. Everything is saved in this browser.</p>
+    <div class="board-form">
+      <select id="bRound">
+        <option value="R1">Round 1 – Preliminaries</option>
+        <option value="R2">Round 2 – Semifinals</option>
+        <option value="R3">Finals</option>
+      </select>
+      <select id="bMonth"></select>
+      <select id="bCat">
+        <option value="Solo">Division: Solo</option>
+        <option value="Group">Division: Group / Choir</option>
+      </select>
+      <input type="text" id="bSong" placeholder="Song (optional)" size="22">
+      <input type="number" id="bJudges" placeholder="Judges /100" min="0" max="100" style="width:110px">
+      <input type="number" id="bVotes" placeholder="Vote tickets" min="0" style="width:120px">
+      <button id="bAdd">Add performance</button>
+    </div>
+    <table class="board" id="perfTable">
+      <thead><tr><th>#</th><th>Round</th><th>Month</th><th>Category</th><th>Song</th><th>Judges</th><th>Votes</th><th>Score</th><th></th></tr></thead>
+      <tbody></tbody>
+    </table>
+    <p class="note">Final score = judges' points + vote tickets. (Tip: you can weigh votes more heavily by entering e.g. votes &times; 5 in the votes column.)</p>
+
+    <h3 class="standings">Standings &amp; Advancement</h3>
+    <div class="board-form">
+      <label style="align-self:center">Advance top <input type="number" id="advSemi" min="1" max="12" style="width:56px"> to semifinals &nbsp;&bull;&nbsp; top <input type="number" id="advFinal" min="1" max="12" style="width:56px"> to finals</label>
+    </div>
+    <div id="standings"></div>
+    <div class="toolbar" style="margin-top:14px">
+      <button class="btn" onclick="window.print()">Print results</button>
+      <button class="btn ghost" id="resetBoard">Reset tally board</button>
+    </div>
+  </section>
+
+  <section id="registration">
+    <h2>Registration Sheets<span class="rule"></span></h2>
+    <p class="lead">Print these for signup day and for the door on event night.</p>
+    <div class="toolbar">
+      <button class="btn" id="printReg">Print registration sheets</button>
+    </div>
+
+    <h3 class="standings">Team Registration &mdash; $10 per month &bull; one act (solo or group)</h3>
+    <table class="board regtbl">
+      <thead><tr><th>Month</th><th>Act type</th><th>Act / artist name</th><th>Contact name &amp; phone</th><th>Round 1 song</th><th>Semis song</th><th>Finals song</th><th>$10 paid</th></tr></thead>
+      <tbody id="regRows"></tbody>
+    </table>
+
+    <h3 class="standings">Door Sign-In &mdash; attendees ($5 admission)</h3>
+    <table class="board regtbl">
+      <thead><tr><th style="width:30%">Name</th><th style="width:15%">Birth month</th><th style="width:20%">Admission paid</th><th>Vote tickets purchased ($)</th></tr></thead>
+      <tbody id="doorRows"></tbody>
+    </table>
+  </section>
+
+</div>
+
+<footer>
+  The December Group &bull; <span>Battle of the Birth Months</span> &bull; Every dollar raised goes to the cause.<br>
+  Questions? Contact [ORGANIZER NAME / PHONE / EMAIL]
+</footer>
+
+<script>
+const MONTHS = ["January","February","March","April","May","June","July","August","September","October","November","December"];
+
+const SONGS = [
+  ["Oh Happy Day","Edwin Hawkins Singers"],
+  ["Soon and Very Soon","Andrae Crouch"],
+  ["My Tribute (To God Be the Glory)","Andrae Crouch"],
+  ["Going Up Yonder","Walter Hawkins"],
+  ["Total Praise","Richard Smallwood"],
+  ["Amazing Grace","Traditional Hymn"],
+  ["Blessed Assurance","Traditional Hymn"],
+  ["It Is Well With My Soul","Traditional Hymn"],
+  ["I'll Fly Away","Traditional"],
+  ["Hold My Mule","Shirley Caesar"],
+  ["I'm Not Tired Yet","Mississippi Mass Choir"],
+  ["You Brought the Sunshine","The Clark Sisters"],
+  ["Is My Living in Vain","The Clark Sisters"],
+  ["The Battle Is the Lord's","Yolanda Adams"],
+  ["Open My Heart","Yolanda Adams"],
+  ["Stand","Donnie McClurkin"],
+  ["We Fall Down","Donnie McClurkin"],
+  ["Never Would Have Made It","Marvin Sapp"],
+  ["The Best in Me","Marvin Sapp"],
+  ["I Need You Now","Smokie Norful"],
+  ["Alabaster Box","CeCe Winans"],
+  ["Shackles (Praise You)","Mary Mary"],
+  ["Can't Give Up Now","Mary Mary"],
+  ["Yesterday","Mary Mary"],
+  ["No Weapon","Fred Hammond"],
+  ["Blessed","Fred Hammond"],
+  ["Stomp","Kirk Franklin"],
+  ["I Smile","Kirk Franklin"],
+  ["Melodies From Heaven","Kirk Franklin & the Family"],
+  ["Love Theory","Kirk Franklin"],
+  ["Encourage Yourself","Donald Lawrence & Tri-City Singers"],
+  ["The Blessing of Abraham","Donald Lawrence"],
+  ["I Trust You","James Fortune & FIYA"],
+  ["Nobody Greater","VaShawn Mitchell"],
+  ["I Need Your Glory","Earnest Pugh"],
+  ["Friend of God","Israel Houghton & New Breed"],
+  ["You Are Good","Israel Houghton & New Breed"],
+  ["Every Praise","Hezekiah Walker"],
+  ["I Give Myself Away","William McDowell"],
+  ["Break Every Chain","Tasha Cobbs Leonard"],
+  ["Take Me to the King","Tamela Mann"],
+  ["Way Maker","Sinach"],
+  ["Jireh","Elevation Worship & Maverick City"],
+  ["Promises","Maverick City Music"],
+  ["Victory Belongs to Jesus","Todd Dulaney"],
+  ["Intentional","Travis Greene"],
+  ["Made a Way","Travis Greene"],
+  ["Make Room","Jonathan McReynolds"],
+  ["He's Able","Deitrick Haddon & VOU"],
+  ["The Presence of the Lord Is Here","Byron Cage"]
+];
+
+// ---------- Song claiming ----------
+const CLAIM_KEY = "dg_song_claims";
+let claims = JSON.parse(localStorage.getItem(CLAIM_KEY) || "{}");
+
+const songList = document.getElementById("songList");
+const claimCount = document.getElementById("claimCount");
+
+function renderSongs(filter = "") {
+  const f = filter.toLowerCase();
+  songList.innerHTML = "";
+  let shown = 0;
+  SONGS.forEach(([title, artist], i) => {
+    if (f && !title.toLowerCase().includes(f) && !artist.toLowerCase().includes(f)) return;
+    shown++;
+    const div = document.createElement("div");
+    div.className = "song" + (claims[i] ? " claimed" : "");
+    const sel = document.createElement("select");
+    sel.innerHTML = `<option value="">Claim...</option>` +
+      MONTHS.map(m => `<option ${claims[i] === m ? "selected" : ""}>${m}</option>`).join("");
+    sel.addEventListener("change", () => {
+      if (sel.value) claims[i] = sel.value; else delete claims[i];
+      localStorage.setItem(CLAIM_KEY, JSON.stringify(claims));
+      renderSongs(document.getElementById("songSearch").value);
+    });
+    div.innerHTML = `<span class="num">${i + 1}</span><div class="meta"><div class="title">${title}</div><div class="artist">${artist}</div></div>`;
+    div.appendChild(sel);
+    songList.appendChild(div);
+  });
+  claimCount.textContent = `${Object.keys(claims).length} / ${SONGS.length} claimed`;
+}
+
+document.getElementById("songSearch").addEventListener("input", e => renderSongs(e.target.value));
+document.getElementById("clearClaims").addEventListener("click", () => {
+  if (confirm("Clear all song claims?")) {
+    claims = {};
+    localStorage.setItem(CLAIM_KEY, "{}");
+    renderSongs();
+  }
+});
+renderSongs();
+
+// ---------- Tally board ----------
+const BOARD_KEY = "dg_tally";
+const ADV_KEY = "dg_advancing";
+const ROUNDS = { R1: "Round 1 – Preliminaries", R2: "Round 2 – Semifinals", R3: "Finals" };
+const ROUND_SHORT = { R1: "Prelims", R2: "Semis", R3: "Finals" };
+let perfs = JSON.parse(localStorage.getItem(BOARD_KEY) || "[]");
+perfs.forEach(p => { if (!p.round) p.round = "R1"; });
+let adv = JSON.parse(localStorage.getItem(ADV_KEY) || "{}");
+if (typeof adv !== "object" || adv === null) adv = {};
+let advSemi = adv.semi || 6, advFinal = adv.final || 3;
+
+const bMonth = document.getElementById("bMonth");
+bMonth.innerHTML = MONTHS.map(m => `<option>${m}</option>`).join("");
+
+function wireAdv(id, key, def) {
+  const el = document.getElementById(id);
+  el.value = def;
+  el.addEventListener("change", () => {
+    const v = Math.max(1, Math.min(12, parseInt(el.value) || def));
+    el.value = v;
+    adv[key] = v;
+    localStorage.setItem(ADV_KEY, JSON.stringify(adv));
+    if (key === "semi") advSemi = v; else advFinal = v;
+    renderBoard();
+  });
+}
+wireAdv("advSemi", "semi", advSemi);
+wireAdv("advFinal", "final", advFinal);
+
+function renderBoard() {
+  const tbody = document.querySelector("#perfTable tbody");
+  tbody.innerHTML = "";
+  perfs.forEach((p, i) => {
+    const tr = document.createElement("tr");
+    tr.innerHTML = `<td>${i + 1}</td><td>${ROUND_SHORT[p.round]}</td><td>${p.month}</td><td>${p.cat}</td><td>${p.song || "—"}</td>
+      <td>${p.judges}</td><td>${p.votes}</td><td><strong>${p.judges + p.votes}</strong></td>`;
+    const td = document.createElement("td");
+    const btn = document.createElement("button");
+    btn.className = "del"; btn.textContent = "✕";
+    btn.onclick = () => { perfs.splice(i, 1); saveBoard(); };
+    td.appendChild(btn); tr.appendChild(td);
+    tbody.appendChild(tr);
+  });
+
+  const box = document.getElementById("standings");
+  box.innerHTML = "";
+  const usedRounds = Object.keys(ROUNDS).filter(r => perfs.some(p => p.round === r));
+  if (!usedRounds.length) {
+    box.innerHTML = '<p class="note">No performances logged yet.</p>';
+    return;
+  }
+  usedRounds.forEach(r => {
+    const h = document.createElement("h3");
+    h.className = "standings";
+    h.textContent = ROUNDS[r];
+    box.appendChild(h);
+
+    const rows = MONTHS.map(m => {
+      const acts = perfs.filter(p => p.round === r && p.month === m);
+      return {
+        m, n: acts.length,
+        div: acts.length ? acts[0].cat : "",
+        j: acts.reduce((s, p) => s + p.judges, 0),
+        v: acts.reduce((s, p) => s + p.votes, 0),
+        tot: acts.reduce((s, p) => s + p.judges + p.votes, 0)
+      };
+    }).filter(x => x.n > 0).sort((a, b) => b.tot - a.tot);
+
+    const isFinal = r === "R3";
+    const cutoff = r === "R1" ? advSemi : advFinal;
+    const bestSolo = isFinal ? (rows.find(x => x.div === "Solo") || {}).m : null;
+    const bestGroup = isFinal ? (rows.find(x => x.div === "Group") || {}).m : null;
+
+    let html = `<table class="board"><thead>
+      <tr><th>#</th><th>Month</th><th>Division</th><th>Judges</th><th>Votes</th><th>Total</th></tr>
+      </thead><tbody>`;
+    if (!rows.length) html += `<tr><td colspan="6"><em>No entries yet.</em></td></tr>`;
+    rows.forEach((row, i) => {
+      let badge = "";
+      if (isFinal && i === 0) badge = ' <span class="winner">★ GRAND CHAMPION</span>';
+      else if (!isFinal && i < cutoff) badge = ' <span class="winner">ADVANCES</span>';
+      if (isFinal && row.m === bestSolo) badge += ' <span class="winner">BEST SOLO</span>';
+      if (isFinal && row.m === bestGroup) badge += ' <span class="winner">BEST GROUP</span>';
+      const cls = (isFinal && i === 0) || (!isFinal && i < cutoff) ? ' class="advance"' : "";
+      html += `<tr${cls}><td>${i + 1}</td><td>${row.m}${badge}</td><td>${row.div}</td>
+        <td>${row.j}</td><td>${row.v}</td><td><strong>${row.tot}</strong></td></tr>`;
+    });
+    const div = document.createElement("div");
+    div.innerHTML = html + "</tbody></table>";
+    box.appendChild(div);
+
+    if (!isFinal) {
+      const note = document.createElement("p");
+      note.className = "note";
+      note.textContent = `Highlighted rows = top ${cutoff} advancing to the next round. Votes reset each round — fresh basket, fresh fundraising.`;
+      box.appendChild(note);
+    }
+  });
+}
+
+function saveBoard() {
+  localStorage.setItem(BOARD_KEY, JSON.stringify(perfs));
+  renderBoard();
+}
+
+document.getElementById("bAdd").addEventListener("click", () => {
+  const votes = parseInt(document.getElementById("bVotes").value) || 0;
+  const judges = parseInt(document.getElementById("bJudges").value) || 0;
+  perfs.push({
+    round: document.getElementById("bRound").value,
+    month: bMonth.value,
+    cat: document.getElementById("bCat").value,
+    song: document.getElementById("bSong").value.trim(),
+    judges, votes
+  });
+  document.getElementById("bSong").value = "";
+  document.getElementById("bVotes").value = "";
+  document.getElementById("bJudges").value = "";
+  saveBoard();
+});
+
+document.getElementById("resetBoard").addEventListener("click", () => {
+  if (confirm("Erase all performances and standings?")) {
+    perfs = [];
+    saveBoard();
+  }
+});
+renderBoard();
+
+// ---------- Registration sheets ----------
+const regRows = document.getElementById("regRows");
+MONTHS.forEach(m => {
+  const tr = document.createElement("tr");
+  tr.innerHTML = `<td><strong>${m}</strong></td>
+    <td class="chk">☐ Solo&nbsp;&nbsp;&nbsp;☐ Group</td><td></td><td></td><td></td><td></td><td></td>
+    <td class="chk">☐</td>`;
+  regRows.appendChild(tr);
+});
+
+const doorRows = document.getElementById("doorRows");
+for (let i = 0; i < 22; i++) {
+  const tr = document.createElement("tr");
+  tr.innerHTML = `<td></td><td></td><td class="chk">☐ $5</td><td></td>`;
+  doorRows.appendChild(tr);
+}
+
+document.getElementById("printReg").addEventListener("click", () => {
+  document.body.classList.add("regonly");
+  window.print();
+});
+window.addEventListener("afterprint", () => document.body.classList.remove("regonly"));
+</script>
+</body>
+</html>
