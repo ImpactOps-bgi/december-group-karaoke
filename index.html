@@ -172,7 +172,19 @@
     body.regonly .hero, body.regonly section, body.regonly footer { display: none; }
     body.regonly section#registration { display: block; }
     body.regonly section#registration .toolbar { display: none; }
+    body.foodonly .hero, body.foodonly section, body.foodonly footer { display: none; }
+    body.foodonly section#food { display: block; }
+    body.foodonly section#food .board-form,
+    body.foodonly section#food .note,
+    body.foodonly section#food th:last-child,
+    body.foodonly section#food td:last-child { display: none; }
+    body.foodonly .foodtbl input, body.foodonly .foodtbl select { border: none; padding: 0; }
   }
+  .foodtbl input, .foodtbl select {
+    width: 100%; font-family: 'Segoe UI', Arial, sans-serif; font-size: 0.85rem;
+    padding: 6px 8px; border: 1px solid #e0d6c2; border-radius: 6px; background: #fff;
+  }
+  .foodtbl td { height: auto; }
   @page registration { size: landscape; }
   section#registration { page: registration; }
 </style>
@@ -229,6 +241,7 @@
       <tr><td>General admission</td><td>$5 per person</td><td>Sold in advance and at the door</td></tr>
       <tr><td>Competition entry</td><td>$10 per month</td><td>Each month fields one act &mdash; solo artist or group/choir</td></tr>
       <tr><td>Vote tickets</td><td>$1 each</td><td>Buy at the door; more detail below</td></tr>
+      <tr><td>Food &amp; beverages</td><td>Priced at event</td><td>Soft drinks, juices, hot dogs, fish cakes, samosas, fried &amp; BBQ wings — see coordination list below</td></tr>
     </table>
   </section>
 
@@ -244,6 +257,22 @@
         <li><strong>Tickets are counted live</strong> on the tally board below. Highest totals win each category.</li>
       </ol>
     </div>
+  </section>
+
+  <section id="food">
+    <h2>Food &amp; Beverage Coordination<span class="rule"></span></h2>
+    <p class="lead">One central list for everything the kitchen needs. For each item, name who <strong>sources</strong> it, who <strong>prepares or cooks</strong> it, and who <strong>serves</strong> it on the night. Menu: soft drinks &amp; juices, hot dogs, fish cakes, samosas, and chicken wings (fried &amp; BBQ). No alcohol.</p>
+    <div class="board-form">
+      <input type="text" id="fItem" placeholder="Supply item" size="26">
+      <input type="text" id="fQty" placeholder="Qty needed" size="12">
+      <button id="fAdd">Add item</button>
+      <button class="btn ghost" id="printFood">Print food signup sheet</button>
+    </div>
+    <table class="board foodtbl" id="foodTable">
+      <thead><tr><th>Item</th><th>Qty</th><th>Sourced by</th><th>Prepared / cooked by</th><th>Served by</th><th>Status</th><th></th></tr></thead>
+      <tbody></tbody>
+    </table>
+    <p class="note">All assignments save automatically in this browser. Print a copy for planning meetings and for the kitchen team on event night.</p>
   </section>
 
   <section id="playlist">
@@ -579,6 +608,73 @@ document.getElementById("printReg").addEventListener("click", () => {
   window.print();
 });
 window.addEventListener("afterprint", () => document.body.classList.remove("regonly"));
+
+// ---------- Food & beverage coordination ----------
+const FOOD_KEY = "dg_food";
+const FOOD_STATUS = ["Needed", "Sourcing", "Ready"];
+const DEFAULT_FOOD = [
+  "Soft drinks (assorted)", "Juices / juice boxes", "Bottled water", "Ice",
+  "Cups", "Napkins", "Plates",
+  "Hot dogs + buns", "Ketchup / mustard / relish",
+  "Fish cakes", "Samosas",
+  "Chicken wings — fried", "Chicken wings — BBQ + sauce",
+  "Serving trays", "Tongs & food gloves", "Warming trays / chafing dishes",
+  "Tablecloths", "Trash bags", "Cash box + change for food sales"
+];
+let food = JSON.parse(localStorage.getItem(FOOD_KEY) || "null");
+if (!Array.isArray(food)) {
+  food = DEFAULT_FOOD.map(item => ({ item, qty: "", source: "", prep: "", serve: "", status: "Needed" }));
+}
+
+function saveFood() {
+  localStorage.setItem(FOOD_KEY, JSON.stringify(food));
+}
+
+function renderFood() {
+  const tbody = document.querySelector("#foodTable tbody");
+  tbody.innerHTML = "";
+  food.forEach((row, i) => {
+    const tr = document.createElement("tr");
+    [["item", "Item"], ["qty", "—"], ["source", "Name…"], ["prep", "Name…"], ["serve", "Name…"]].forEach(([k, ph]) => {
+      const td = document.createElement("td");
+      const inp = document.createElement("input");
+      inp.value = row[k];
+      inp.placeholder = ph;
+      inp.addEventListener("input", () => { food[i][k] = inp.value; saveFood(); });
+      td.appendChild(inp);
+      tr.appendChild(td);
+    });
+    const tdS = document.createElement("td");
+    const sel = document.createElement("select");
+    sel.innerHTML = FOOD_STATUS.map(s => `<option ${row.status === s ? "selected" : ""}>${s}</option>`).join("");
+    sel.addEventListener("change", () => { row.status = sel.value; saveFood(); });
+    tdS.appendChild(sel);
+    tr.appendChild(tdS);
+    const td = document.createElement("td");
+    const btn = document.createElement("button");
+    btn.className = "del"; btn.textContent = "✕";
+    btn.onclick = () => { food.splice(i, 1); saveFood(); renderFood(); };
+    td.appendChild(btn); tr.appendChild(td);
+    tbody.appendChild(tr);
+  });
+}
+
+document.getElementById("fAdd").addEventListener("click", () => {
+  const item = document.getElementById("fItem").value.trim();
+  if (!item) return;
+  food.push({ item, qty: document.getElementById("fQty").value.trim(), source: "", prep: "", serve: "", status: "Needed" });
+  document.getElementById("fItem").value = "";
+  document.getElementById("fQty").value = "";
+  saveFood();
+  renderFood();
+});
+
+document.getElementById("printFood").addEventListener("click", () => {
+  document.body.classList.add("foodonly");
+  window.print();
+});
+window.addEventListener("afterprint", () => document.body.classList.remove("foodonly"));
+renderFood();
 </script>
 </body>
 </html>
