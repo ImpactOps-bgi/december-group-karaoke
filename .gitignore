@@ -1,1 +1,1 @@
-PLANNING-NOTES.md
+# Private planning files are excluded via .git/info/exclude (keeps them editable locally)
