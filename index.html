@@ -247,7 +247,7 @@
       <tr><td>General admission</td><td>$5 per person</td><td>Sold in advance and at the door</td></tr>
       <tr><td>Competition entry</td><td>$10 per month</td><td>Each month fields one act &mdash; solo artist or group/choir (max 5 singers)</td></tr>
       <tr><td>Vote tickets</td><td>$1 each</td><td>Buy at the door; more detail below</td></tr>
-      <tr><td>Food &amp; beverages</td><td>Priced at event</td><td>Soft drinks, juices, hot dogs, fish cakes, samosas, fried &amp; BBQ wings — see coordination list below</td></tr>
+      <tr><td>Food &amp; beverages</td><td>Priced at event</td><td>Soft drinks, juices, hot dogs, burgers &amp; veggie burgers, fish cakes, samosas, fried &amp; BBQ wings — see coordination list below</td></tr>
     </table>
   </section>
 
@@ -267,7 +267,7 @@
 
   <section id="food">
     <h2>Food &amp; Beverage Coordination<span class="rule"></span></h2>
-    <p class="lead">One central list for everything the kitchen needs. For each item, name who <strong>sources</strong> it, who <strong>prepares or cooks</strong> it, and who <strong>serves</strong> it on the night. Menu: soft drinks &amp; juices, hot dogs, fish cakes, samosas, and chicken wings (fried &amp; BBQ). No alcohol.</p>
+    <p class="lead">One central list for everything the kitchen needs. For each item, name who <strong>sources</strong> it, who <strong>prepares or cooks</strong> it, and who <strong>serves</strong> it on the night. Menu: soft drinks &amp; juices, hot dogs, hamburgers, veggie burgers, fish cakes, samosas, and chicken wings (fried &amp; BBQ). No alcohol.</p>
     <div class="board-form">
       <input type="text" id="fItem" placeholder="Supply item" size="26">
       <input type="text" id="fQty" placeholder="Qty needed" size="12">
@@ -623,7 +623,7 @@ const FOOD_STATUS = ["Needed", "Sourcing", "Ready"];
 const DEFAULT_FOOD = [
   "Soft drinks (assorted)", "Juices / juice boxes", "Bottled water", "Ice",
   "Cups", "Napkins", "Plates",
-  "Hot dogs + buns", "Ketchup / mustard / relish",
+  "Hot dogs + buns", "Hamburgers + buns", "Veggie burgers + buns", "Burger toppings (lettuce, tomato, onion, cheese)", "Ketchup / mustard / relish",
   "Fish cakes", "Samosas",
   "Chicken wings — fried", "Chicken wings — BBQ + sauce",
   "Serving trays", "Tongs & food gloves", "Warming trays / chafing dishes",
@@ -632,6 +632,12 @@ const DEFAULT_FOOD = [
 let food = JSON.parse(localStorage.getItem(FOOD_KEY) || "null");
 if (!Array.isArray(food)) {
   food = DEFAULT_FOOD.map(item => ({ item, qty: "", source: "", prep: "", serve: "", status: "Needed" }));
+} else {
+  DEFAULT_FOOD.forEach(item => {
+    if (!food.some(r => r.item === item)) {
+      food.push({ item, qty: "", source: "", prep: "", serve: "", status: "Needed" });
+    }
+  });
 }
 
 function saveFood() {
