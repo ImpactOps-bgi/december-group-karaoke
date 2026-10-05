@@ -208,13 +208,13 @@
 
   <section id="how">
     <h2>How It Works<span class="rule"></span></h2>
-    <p class="lead">Twelve teams, one for every birth month. Each team enters the stage in two categories &mdash; a solo artist and a group/choir &mdash; and the audience decides who takes the crown, one dollar-vote at a time.</p>
+    <p class="lead">Twelve teams, one for every birth month. Each team fields <strong>one act</strong> &mdash; a solo artist or a group/choir of up to 5 singers &mdash; and the audience decides who takes the crown, one dollar-vote at a time.</p>
     <div class="cards">
       <div class="card">
         <h3>The Teams</h3>
         <ul>
           <li>Your birth month is your team. Team up with everyone born in the same month.</li>
-          <li>Each month fields <strong>one act</strong> &mdash; either a <strong>solo artist</strong> or a <strong>group/choir</strong> (2 or more singers). Choose wisely!</li>
+          <li>Each month fields <strong>one act</strong> &mdash; either a <strong>solo artist</strong> or a <strong>group/choir of 2&ndash;5 singers</strong>. Choose wisely!</li>
           <li>Songs are claimed first-come, first-served from the official 50-song playlist below.</li>
         </ul>
       </div>
@@ -245,7 +245,7 @@
     <table class="fees">
       <tr><th>Item</th><th>Cost</th><th>Notes</th></tr>
       <tr><td>General admission</td><td>$5 per person</td><td>Sold in advance and at the door</td></tr>
-      <tr><td>Competition entry</td><td>$10 per month</td><td>Each month fields one act &mdash; solo artist or group/choir</td></tr>
+      <tr><td>Competition entry</td><td>$10 per month</td><td>Each month fields one act &mdash; solo artist or group/choir (max 5 singers)</td></tr>
       <tr><td>Vote tickets</td><td>$1 each</td><td>Buy at the door; more detail below</td></tr>
       <tr><td>Food &amp; beverages</td><td>Priced at event</td><td>Soft drinks, juices, hot dogs, fish cakes, samosas, fried &amp; BBQ wings — see coordination list below</td></tr>
     </table>
@@ -315,7 +315,7 @@
       <select id="bMonth"></select>
       <select id="bCat">
         <option value="Solo">Division: Solo</option>
-        <option value="Group">Division: Group / Choir</option>
+        <option value="Group">Division: Group (2&ndash;5)</option>
       </select>
       <input type="text" id="bSong" placeholder="Song (optional)" size="22">
       <input type="number" inputmode="numeric" id="bJudges" placeholder="Judges /100" min="0" max="100" step="1" style="width:110px">
@@ -346,7 +346,7 @@
       <button class="btn" id="printReg">Print registration sheets</button>
     </div>
 
-    <h3 class="standings">Team Registration &mdash; $10 per month &bull; one act (solo or group)</h3>
+    <h3 class="standings">Team Registration &mdash; $10 per month &bull; one act (solo or group of 2&ndash;5)</h3>
     <table class="board regtbl">
       <thead><tr><th>Month</th><th>Act type</th><th>Act / artist name</th><th>Contact name &amp; phone</th><th>Round 1 song</th><th>Semis song</th><th>Finals song</th><th>$10 paid</th></tr></thead>
       <tbody id="regRows"></tbody>
@@ -599,7 +599,7 @@ const regRows = document.getElementById("regRows");
 MONTHS.forEach(m => {
   const tr = document.createElement("tr");
   tr.innerHTML = `<td><strong>${m}</strong></td>
-    <td class="chk">☐ Solo&nbsp;&nbsp;&nbsp;☐ Group</td><td></td><td></td><td></td><td></td><td></td>
+    <td class="chk">☐ Solo&nbsp;&nbsp;&nbsp;☐ Group (2&ndash;5)</td><td></td><td></td><td></td><td></td><td></td>
     <td class="chk">☐</td>`;
   regRows.appendChild(tr);
 });
