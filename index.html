@@ -146,6 +146,14 @@
     border-radius: 6px; padding: 4px 7px; white-space: nowrap;
   }
   .song .ytlink:hover { background: #fdf3d8; }
+  .tag {
+    display: inline-block; font-family: 'Segoe UI', Arial, sans-serif;
+    font-size: 0.65rem; font-weight: 600; letter-spacing: 0.5px;
+    padding: 2px 8px; border-radius: 999px; vertical-align: 2px;
+  }
+  .tag-S { background: #ece5f7; color: #5a3d99; }
+  .tag-G { background: #fdeec8; color: #8a6d1d; }
+  .tag-B { background: #dff0e3; color: #2e6b3e; }
   .board-form {
     display: flex; flex-wrap: wrap; gap: 10px; margin: 14px 0 18px;
     font-family: 'Segoe UI', Arial, sans-serif;
@@ -283,9 +291,15 @@
 
   <section id="playlist">
     <h2>The Official Playlist &mdash; 50 Songs<span class="rule"></span></h2>
-    <p class="lead">Each team picks its songs on signup. Songs are first-come, first-served &mdash; once a month claims it, it's theirs. Use the selectors to record which month has claimed each song.</p>
+    <p class="lead">Each song is tagged <strong>Solo</strong>, <strong>Group</strong>, or <strong>Solo or Group</strong> &mdash; pick songs that fit your act. Songs are claimed first-come, first-served &mdash; once a month claims it, it's theirs. Use the selectors to record which month has claimed each song.</p>
     <div class="toolbar">
       <input type="search" id="songSearch" placeholder="Search songs or artists...">
+      <select id="songDivFilter">
+        <option value="">All songs</option>
+        <option value="S">Solo songs</option>
+        <option value="G">Group songs</option>
+        <option value="B">Solo or Group</option>
+      </select>
       <span class="pill" id="claimCount">0 / 50 claimed</span>
       <button class="btn ghost" id="clearClaims">Clear all claims</button>
     </div>
@@ -370,57 +384,58 @@
 const MONTHS = ["January","February","March","April","May","June","July","August","September","October","November","December"];
 
 const SONGS = [
-  ["Oh Happy Day","Edwin Hawkins Singers"],
-  ["Soon and Very Soon","Andrae Crouch"],
-  ["My Tribute (To God Be the Glory)","Andrae Crouch"],
-  ["Going Up Yonder","Walter Hawkins"],
-  ["Total Praise","Richard Smallwood"],
-  ["Amazing Grace","Traditional Hymn"],
-  ["Blessed Assurance","Traditional Hymn"],
-  ["It Is Well With My Soul","Traditional Hymn"],
-  ["I'll Fly Away","Traditional"],
-  ["For Every Mountain","Kurt Carr & The Kurt Carr Singers"],
-  ["I'm Not Tired Yet","Mississippi Mass Choir"],
-  ["You Brought the Sunshine","The Clark Sisters"],
-  ["Is My Living in Vain","The Clark Sisters"],
-  ["The Battle Is the Lord's","Yolanda Adams"],
-  ["Open My Heart","Yolanda Adams"],
-  ["Stand","Donnie McClurkin"],
-  ["We Fall Down","Donnie McClurkin"],
-  ["Never Would Have Made It","Marvin Sapp"],
-  ["The Best in Me","Marvin Sapp"],
-  ["I Need You Now","Smokie Norful"],
-  ["Alabaster Box","CeCe Winans"],
-  ["Shackles (Praise You)","Mary Mary"],
-  ["Can't Give Up Now","Mary Mary"],
-  ["Yesterday","Mary Mary"],
-  ["No Weapon","Fred Hammond"],
-  ["Blessed","Fred Hammond"],
-  ["Stomp","Kirk Franklin"],
-  ["I Smile","Kirk Franklin"],
-  ["Melodies From Heaven","Kirk Franklin & the Family"],
-  ["Love Theory","Kirk Franklin"],
-  ["Encourage Yourself","Donald Lawrence & Tri-City Singers"],
-  ["The Blessing of Abraham","Donald Lawrence"],
-  ["I Trust You","James Fortune & FIYA"],
-  ["Nobody Greater","VaShawn Mitchell"],
-  ["I Need Your Glory","Earnest Pugh"],
-  ["Friend of God","Israel Houghton & New Breed"],
-  ["You Are Good","Israel Houghton & New Breed"],
-  ["Every Praise","Hezekiah Walker"],
-  ["I Give Myself Away","William McDowell"],
-  ["Break Every Chain","Tasha Cobbs Leonard"],
-  ["Take Me to the King","Tamela Mann"],
-  ["Way Maker","Sinach"],
-  ["Jireh","Elevation Worship & Maverick City"],
-  ["Promises","Maverick City Music"],
-  ["Victory Belongs to Jesus","Todd Dulaney"],
-  ["Intentional","Travis Greene"],
-  ["Made a Way","Travis Greene"],
-  ["Make Room","Jonathan McReynolds"],
-  ["He's Able","Deitrick Haddon & VOU"],
-  ["The Presence of the Lord Is Here","Byron Cage"]
+  ["Oh Happy Day","Edwin Hawkins Singers","G"],
+  ["Soon and Very Soon","Andrae Crouch","G"],
+  ["My Tribute (To God Be the Glory)","Andrae Crouch","B"],
+  ["Going Up Yonder","Walter Hawkins","B"],
+  ["Total Praise","Richard Smallwood","G"],
+  ["Amazing Grace","Traditional Hymn","B"],
+  ["Blessed Assurance","Traditional Hymn","B"],
+  ["It Is Well With My Soul","Traditional Hymn","B"],
+  ["I'll Fly Away","Traditional","B"],
+  ["For Every Mountain","Kurt Carr & The Kurt Carr Singers","G"],
+  ["I'm Not Tired Yet","Mississippi Mass Choir","G"],
+  ["You Brought the Sunshine","The Clark Sisters","G"],
+  ["Is My Living in Vain","The Clark Sisters","G"],
+  ["The Battle Is the Lord's","Yolanda Adams","S"],
+  ["Open My Heart","Yolanda Adams","S"],
+  ["Stand","Donnie McClurkin","B"],
+  ["We Fall Down","Donnie McClurkin","B"],
+  ["Never Would Have Made It","Marvin Sapp","S"],
+  ["The Best in Me","Marvin Sapp","S"],
+  ["I Need You Now","Smokie Norful","S"],
+  ["Alabaster Box","CeCe Winans","S"],
+  ["Shackles (Praise You)","Mary Mary","G"],
+  ["Can't Give Up Now","Mary Mary","B"],
+  ["Yesterday","Mary Mary","G"],
+  ["No Weapon","Fred Hammond","G"],
+  ["Blessed","Fred Hammond","B"],
+  ["Stomp","Kirk Franklin","G"],
+  ["I Smile","Kirk Franklin","G"],
+  ["Melodies From Heaven","Kirk Franklin & the Family","G"],
+  ["Love Theory","Kirk Franklin","G"],
+  ["Encourage Yourself","Donald Lawrence & Tri-City Singers","B"],
+  ["The Blessing of Abraham","Donald Lawrence","G"],
+  ["I Trust You","James Fortune & FIYA","B"],
+  ["Nobody Greater","VaShawn Mitchell","B"],
+  ["I Need Your Glory","Earnest Pugh","S"],
+  ["Friend of God","Israel Houghton & New Breed","B"],
+  ["You Are Good","Israel Houghton & New Breed","B"],
+  ["Every Praise","Hezekiah Walker","G"],
+  ["I Give Myself Away","William McDowell","B"],
+  ["Break Every Chain","Tasha Cobbs Leonard","S"],
+  ["Take Me to the King","Tamela Mann","S"],
+  ["Way Maker","Sinach","B"],
+  ["Jireh","Elevation Worship & Maverick City","B"],
+  ["Promises","Maverick City Music","B"],
+  ["Victory Belongs to Jesus","Todd Dulaney","B"],
+  ["Intentional","Travis Greene","B"],
+  ["Made a Way","Travis Greene","B"],
+  ["Make Room","Jonathan McReynolds","S"],
+  ["He's Able","Deitrick Haddon & VOU","B"],
+  ["The Presence of the Lord Is Here","Byron Cage","G"]
 ];
+const TAGS = { S: "Solo", G: "Group", B: "Solo or Group" };
 
 // ---------- Song claiming ----------
 const CLAIM_KEY = "dg_song_claims";
@@ -429,12 +444,14 @@ let claims = JSON.parse(localStorage.getItem(CLAIM_KEY) || "{}");
 const songList = document.getElementById("songList");
 const claimCount = document.getElementById("claimCount");
 
-function renderSongs(filter = "") {
-  const f = filter.toLowerCase();
+function renderSongs() {
+  const f = document.getElementById("songSearch").value.toLowerCase();
+  const dv = document.getElementById("songDivFilter").value;
   songList.innerHTML = "";
   let shown = 0;
-  SONGS.forEach(([title, artist], i) => {
+  SONGS.forEach(([title, artist, tag], i) => {
     if (f && !title.toLowerCase().includes(f) && !artist.toLowerCase().includes(f)) return;
+    if (dv && tag !== dv) return;
     shown++;
     const div = document.createElement("div");
     div.className = "song" + (claims[i] ? " claimed" : "");
@@ -444,9 +461,9 @@ function renderSongs(filter = "") {
     sel.addEventListener("change", () => {
       if (sel.value) claims[i] = sel.value; else delete claims[i];
       localStorage.setItem(CLAIM_KEY, JSON.stringify(claims));
-      renderSongs(document.getElementById("songSearch").value);
+      renderSongs();
     });
-    div.innerHTML = `<span class="num">${i + 1}</span><div class="meta"><div class="title">${title}</div><div class="artist">${artist}</div></div>
+    div.innerHTML = `<span class="num">${i + 1}</span><div class="meta"><div class="title">${title} <span class="tag tag-${tag}">${TAGS[tag]}</span></div><div class="artist">${artist}</div></div>
       <a class="ytlink" target="_blank" title="Find karaoke versions on YouTube"
          href="https://www.youtube.com/results?search_query=${encodeURIComponent(title + " " + artist + " karaoke")}">Karaoke&nbsp;&#8599;</a>`;
     div.appendChild(sel);
@@ -455,7 +472,8 @@ function renderSongs(filter = "") {
   claimCount.textContent = `${Object.keys(claims).length} / ${SONGS.length} claimed`;
 }
 
-document.getElementById("songSearch").addEventListener("input", e => renderSongs(e.target.value));
+document.getElementById("songSearch").addEventListener("input", renderSongs);
+document.getElementById("songDivFilter").addEventListener("change", renderSongs);
 document.getElementById("clearClaims").addEventListener("click", () => {
   if (confirm("Clear all song claims?")) {
     claims = {};
