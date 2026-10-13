@@ -154,6 +154,19 @@
   .tag-S { background: #ece5f7; color: #5a3d99; }
   .tag-G { background: #fdeec8; color: #8a6d1d; }
   .tag-B { background: #dff0e3; color: #2e6b3e; }
+  .sponsor-badge {
+    display: inline-block; background: var(--gold); color: var(--purple);
+    font-family: 'Segoe UI', Arial, sans-serif; font-size: 0.7rem; font-weight: 700;
+    letter-spacing: 1px; text-transform: uppercase; padding: 4px 10px;
+    border-radius: 999px; margin-bottom: 10px;
+  }
+  .sponsor p { font-size: 0.92rem; margin-bottom: 10px; }
+  .sponsor-quote {
+    font-style: italic; color: #4a4360;
+    border-left: 3px solid var(--gold); padding-left: 12px;
+  }
+  .sponsor-links a { color: var(--purple); font-family: 'Segoe UI', Arial, sans-serif; font-size: 0.85rem; }
+  .sponsor-contact { font-size: 0.8rem; color: #7a7290; font-family: 'Segoe UI', Arial, sans-serif; }
   .board-form {
     display: flex; flex-wrap: wrap; gap: 10px; margin: 14px 0 18px;
     font-family: 'Segoe UI', Arial, sans-serif;
@@ -216,13 +229,13 @@
 
   <section id="how">
     <h2>How It Works<span class="rule"></span></h2>
-    <p class="lead">Twelve teams, one for every birth month. Each team fields <strong>one act</strong> &mdash; a solo artist or a group/choir of up to 5 singers &mdash; and the audience decides who takes the crown, one dollar-vote at a time.</p>
+    <p class="lead">Twelve teams, one for every birth month. Each team fields <strong>one act</strong> &mdash; a solo artist or a group of up to 3 singers &mdash; and the audience decides who takes the crown, one dollar-vote at a time.</p>
     <div class="cards">
       <div class="card">
         <h3>The Teams</h3>
         <ul>
           <li>Your birth month is your team. Team up with everyone born in the same month.</li>
-          <li>Each month fields <strong>one act</strong> &mdash; either a <strong>solo artist</strong> or a <strong>group of 2&ndash;5 singers</strong>. Choose wisely!</li>
+          <li>Each month fields <strong>one act</strong> &mdash; either a <strong>solo artist</strong> or a <strong>group of 2&ndash;3 singers</strong>. Choose wisely!</li>
           <li>Songs are claimed first-come, first-served from the official 50-song playlist below.</li>
         </ul>
       </div>
@@ -240,8 +253,35 @@
         <ul>
           <li><strong>Grand Champion Month</strong> &mdash; the finals winner.</li>
           <li><strong>Best Solo</strong> and <strong>Best Group</strong> &mdash; top-scoring act of each division in the finals.</li>
+          <li><strong>Prize:</strong> a semester of vocal training for 5 singers, sponsored by InTune Vocal Coaching &mdash; shared across all three titles: Grand Champion 1 place, Best Solo 1 place, Best Group 3 places. See below.</li>
           <li>Trophies, bragging rights for the whole year, and glory for your birth month.</li>
           <li>Every dollar raised supports The December Group's mission.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section id="sponsors">
+    <h2>Prizes &amp; Sponsors<span class="rule"></span></h2>
+    <p class="lead">Our prizes are sponsored by partners who believe in the ministry of music.</p>
+    <div class="cards">
+      <div class="card sponsor">
+        <div class="sponsor-badge">Grand Prize Sponsor</div>
+        <h3>InTune Vocal Coaching</h3>
+        <p><strong>Prize:</strong> a full semester of vocal training for 5 singers, shared across all three titles &mdash; <strong>Grand Champion:</strong> 1 place &bull; <strong>Best Solo:</strong> 1 place &bull; <strong>Best Group:</strong> 3 places (the whole group trains together). If one act wins two titles, the extra place passes to the runner-up in that division.</p>
+        <p class="sponsor-quote">&ldquo;These two groups have improved leaps and bounds since Mr. Blackman has been working with them&hellip; he comes highly recommended in relation to vocal training.&rdquo;<br><em>&mdash; Bishop Mark S. Harewood, Love and Light Ministries International</em></p>
+        <p class="sponsor-links">
+          <a href="https://www.instagram.com/alexthevocalcoach/" target="_blank">Instagram: @alexthevocalcoach</a> &nbsp;&bull;&nbsp;
+          <a href="https://orb-seabass-f6ca.squarespace.com/testimonials" target="_blank">Testimonials</a>
+        </p>
+        <p class="sponsor-contact">Alex Blackman, Vocal Coach &mdash; Bridgetown, Barbados &mdash; (246) 244-9323</p>
+      </div>
+      <div class="card">
+        <h3>Become a Prize Sponsor</h3>
+        <ul>
+          <li>Underwrite a trophy or prize for Solo, Group, or Grand Champion.</li>
+          <li>Get featured here on the event page and announced throughout the night.</li>
+          <li>Contact [ORGANIZER NAME / PHONE / EMAIL] to partner with us.</li>
         </ul>
       </div>
     </div>
@@ -253,7 +293,7 @@
     <table class="fees">
       <tr><th>Item</th><th>Cost</th><th>Notes</th></tr>
       <tr><td>General admission</td><td>$5 per person</td><td>Sold in advance and at the door</td></tr>
-      <tr><td>Competition entry</td><td>$10 per month</td><td>Each month fields one act &mdash; solo artist or group/choir (max 5 singers)</td></tr>
+      <tr><td>Competition entry</td><td>$10 per month</td><td>Each month fields one act &mdash; solo artist or group (max 3 singers)</td></tr>
       <tr><td>Vote tickets</td><td>$1 each</td><td>Buy at the door; more detail below</td></tr>
       <tr><td>Food &amp; beverages</td><td>Priced at event</td><td>Soft drinks, juices, hot dogs, burgers &amp; veggie burgers, fish cakes, samosas, fried &amp; BBQ wings — see coordination list below</td></tr>
     </table>
@@ -329,7 +369,7 @@
       <select id="bMonth"></select>
       <select id="bCat">
         <option value="Solo">Division: Solo</option>
-        <option value="Group">Division: Group (2&ndash;5)</option>
+        <option value="Group">Division: Group (2&ndash;3)</option>
       </select>
       <input type="text" id="bSong" placeholder="Song (optional)" size="22">
       <input type="number" inputmode="numeric" id="bJudges" placeholder="Judges /100" min="0" max="100" step="1" style="width:110px">
@@ -360,7 +400,7 @@
       <button class="btn" id="printReg">Print registration sheets</button>
     </div>
 
-    <h3 class="standings">Team Registration &mdash; $10 per month &bull; one act (solo or group of 2&ndash;5)</h3>
+    <h3 class="standings">Team Registration &mdash; $10 per month &bull; one act (solo or group of 2&ndash;3)</h3>
     <table class="board regtbl">
       <thead><tr><th>Month</th><th>Act type</th><th>Act / artist name</th><th>Contact name &amp; phone</th><th>Round 1 song</th><th>Semis song</th><th>Finals song</th><th>$10 paid</th></tr></thead>
       <tbody id="regRows"></tbody>
@@ -617,7 +657,7 @@ const regRows = document.getElementById("regRows");
 MONTHS.forEach(m => {
   const tr = document.createElement("tr");
   tr.innerHTML = `<td><strong>${m}</strong></td>
-    <td class="chk">☐ Solo&nbsp;&nbsp;&nbsp;☐ Group (2&ndash;5)</td><td></td><td></td><td></td><td></td><td></td>
+    <td class="chk">☐ Solo&nbsp;&nbsp;&nbsp;☐ Group (2&ndash;3)</td><td></td><td></td><td></td><td></td><td></td>
     <td class="chk">☐</td>`;
   regRows.appendChild(tr);
 });
