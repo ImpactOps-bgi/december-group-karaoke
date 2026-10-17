@@ -167,6 +167,20 @@
   }
   .sponsor-links a { color: var(--purple); font-family: 'Segoe UI', Arial, sans-serif; font-size: 0.85rem; }
   .sponsor-contact { font-size: 0.8rem; color: #7a7290; font-family: 'Segoe UI', Arial, sans-serif; }
+  .admin-only { display: none !important; }
+  body.admin .admin-only { display: block !important; }
+  body.admin .admin-only.flex { display: flex !important; }
+  body.admin button.admin-only { display: inline-block !important; }
+  #adminBadge {
+    position: fixed; bottom: 12px; right: 12px; z-index: 99;
+    background: var(--purple); color: var(--gold-2);
+    font: 600 0.75rem 'Segoe UI', Arial, sans-serif;
+    padding: 6px 14px; border-radius: 999px; display: none;
+    box-shadow: 0 2px 8px rgba(0,0,0,.25);
+  }
+  body.admin #adminBadge { display: block; }
+  .claimlabel { font-family: 'Segoe UI', Arial, sans-serif; font-size: 0.78rem; font-weight: 600; color: var(--purple); }
+  .live { color: #2e6b3e; }
   .board-form {
     display: flex; flex-wrap: wrap; gap: 10px; margin: 14px 0 18px;
     font-family: 'Segoe UI', Arial, sans-serif;
@@ -323,7 +337,7 @@
     </div>
   </section>
 
-  <section id="food">
+  <section id="food" class="admin-only">
     <h2>Food &amp; Beverage Coordination<span class="rule"></span></h2>
     <p class="lead">One central list for everything the kitchen needs. For each item, name who <strong>sources</strong> it, who <strong>prepares or cooks</strong> it, and who <strong>serves</strong> it on the night. Menu: soft drinks &amp; juices, hot dogs, hamburgers, veggie burgers, fish cakes, samosas, and chicken wings (fried &amp; BBQ). No alcohol.</p>
     <div class="board-form">
@@ -341,7 +355,8 @@
 
   <section id="playlist">
     <h2>The Official Playlist &mdash; 50 Songs<span class="rule"></span></h2>
-    <p class="lead">Each song is tagged <strong>Solo</strong>, <strong>Group</strong>, or <strong>Solo or Group</strong> &mdash; <strong>rule: acts may only claim songs matching their division.</strong> Solo acts choose from Solo and Solo-or-Group songs; group acts choose from Group and Solo-or-Group songs. Songs are claimed first-come, first-served &mdash; once a month claims it, it's theirs. Use the selectors to record which month has claimed each song.</p>
+    <p class="lead">Each song is tagged <strong>Solo</strong>, <strong>Group</strong>, or <strong>Solo or Group</strong> &mdash; <strong>rule: acts may only claim songs matching their division.</strong> Solo acts choose from Solo and Solo-or-Group songs; group acts choose from Group and Solo-or-Group songs. Songs are claimed first-come, first-served &mdash; once a month claims it, it's theirs. </p>
+    <p class="note admin-only">Admins: use the dropdowns on each song to record which month has claimed it.</p>
     <div class="toolbar">
       <input type="search" id="songSearch" placeholder="Search songs or artists...">
       <select id="songDivFilter">
@@ -351,7 +366,7 @@
         <option value="B">Solo or Group</option>
       </select>
       <span class="pill" id="claimCount">0 / 50 claimed</span>
-      <button class="btn ghost" id="clearClaims">Clear all claims</button>
+      <button class="btn ghost admin-only" id="clearClaims">Clear all claims</button>
     </div>
     <div class="songs" id="songList"></div>
   </section>
@@ -369,8 +384,8 @@
 
   <section id="board">
     <h2>Live Tally Board<span class="rule"></span></h2>
-    <p class="lead">During the show: pick the round, after the basket passes count the tickets, and log the performance. Standings update automatically and highlight which acts advance to the next round. Everything is saved in this browser.</p>
-    <div class="board-form">
+    <p class="lead" id="boardLead">During the show: pick the round, after the basket passes count the tickets, and log the performance. Standings update automatically and highlight which acts advance to the next round.</p>
+    <div class="board-form admin-only flex">
       <select id="bRound">
         <option value="R1">Round 1 – Preliminaries</option>
         <option value="R2">Round 2 – Semifinals</option>
@@ -392,18 +407,18 @@
     </table>
     <p class="note">Final score = judges' points + vote tickets. (Tip: you can weigh votes more heavily by entering e.g. votes &times; 5 in the votes column.)</p>
 
-    <h3 class="standings">Standings &amp; Advancement</h3>
-    <div class="board-form">
+    <h3 class="standings">Standings &amp; Advancement <span class="pill live" id="livePill" style="display:none">● LIVE</span></h3>
+    <div class="board-form admin-only flex">
       <label style="align-self:center">Advance top <input type="number" id="advSemi" min="1" max="12" style="width:56px"> to semifinals &nbsp;&bull;&nbsp; top <input type="number" id="advFinal" min="1" max="12" style="width:56px"> to finals</label>
     </div>
     <div id="standings"></div>
     <div class="toolbar" style="margin-top:14px">
       <button class="btn" onclick="window.print()">Print results</button>
-      <button class="btn ghost" id="resetBoard">Reset tally board</button>
+      <button class="btn ghost admin-only" id="resetBoard">Reset tally board</button>
     </div>
   </section>
 
-  <section id="registration">
+  <section id="registration" class="admin-only">
     <h2>Registration Sheets<span class="rule"></span></h2>
     <p class="lead">Print these for signup day and for the door on event night.</p>
     <div class="toolbar">
@@ -425,6 +440,7 @@
 
 </div>
 
+<div id="adminBadge">Admin mode</div>
 <footer>
   The December Group &bull; <span>Battle of the Birth Months</span> &bull; Every dollar raised goes to the cause.<br>
   Questions? Contact [ORGANIZER NAME / PHONE / EMAIL]
@@ -487,10 +503,82 @@ const SONGS = [
 ];
 const TAGS = { S: "Solo", G: "Group", B: "Solo or Group" };
 
-// ---------- Song claiming ----------
-const CLAIM_KEY = "dg_song_claims";
-let claims = JSON.parse(localStorage.getItem(CLAIM_KEY) || "{}");
+// ---------- data layer ----------
+// ONLINE  = served from Netlify → shared Postgres data via /api functions
+// OFFLINE = opened anywhere else (file://, GitHub Pages, local server) → localStorage, admin features on
+const CLAIM_KEY = "dg_song_claims", BOARD_KEY = "dg_tally", ADV_KEY = "dg_advancing", FOOD_KEY = "dg_food";
+const ROUNDS = { R1: "Round 1 – Preliminaries", R2: "Round 2 – Semifinals", R3: "Finals" };
+const ROUND_SHORT = { R1: "Prelims", R2: "Semis", R3: "Finals" };
+const FOOD_STATUS = ["Needed", "Sourcing", "Ready"];
+const DEFAULT_FOOD = [
+  "Soft drinks (assorted)", "Juices / juice boxes", "Bottled water", "Ice",
+  "Cups", "Napkins", "Plates",
+  "Hot dogs + buns", "Hamburgers + buns", "Veggie burgers + buns", "Burger toppings (lettuce, tomato, onion, cheese)", "Ketchup / mustard / relish",
+  "Fish cakes", "Samosas",
+  "Chicken wings — fried", "Chicken wings — BBQ + sauce",
+  "Serving trays", "Tongs & food gloves", "Warming trays / chafing dishes",
+  "Tablecloths", "Trash bags", "Cash box + change for food sales"
+];
 
+const wantAdmin = new URLSearchParams(location.search).has("admin");
+let ADMIN = false, ONLINE = false;
+let ADMIN_KEY = sessionStorage.getItem("dg_admin_key") || "";
+let claims = {}, perfs = [], food = [], advSemi = 6, advFinal = 3;
+
+async function api(path, opts = {}) {
+  const r = await fetch("/api/" + path, {
+    method: opts.method || "GET",
+    headers: { "content-type": "application/json", "x-admin-key": ADMIN_KEY },
+    body: opts.body !== undefined ? JSON.stringify(opts.body) : undefined
+  });
+  if (!r.ok) { const e = new Error("http " + r.status); e.status = r.status; throw e; }
+  return r.json();
+}
+
+function loadLocal() {
+  claims = JSON.parse(localStorage.getItem(CLAIM_KEY) || "{}");
+  perfs = JSON.parse(localStorage.getItem(BOARD_KEY) || "[]");
+  perfs.forEach(p => { if (!p.round) p.round = "R1"; });
+  const adv = JSON.parse(localStorage.getItem(ADV_KEY) || "{}");
+  advSemi = adv.semi || 6; advFinal = adv.final || 3;
+  food = JSON.parse(localStorage.getItem(FOOD_KEY) || "null");
+  if (!Array.isArray(food)) {
+    food = DEFAULT_FOOD.map(item => ({ item, qty: "", source: "", prep: "", serve: "", status: "Needed" }));
+  } else {
+    DEFAULT_FOOD.forEach(item => {
+      if (!food.some(r => r.item === item)) food.push({ item, qty: "", source: "", prep: "", serve: "", status: "Needed" });
+    });
+  }
+}
+
+function saveLocal() {
+  localStorage.setItem(CLAIM_KEY, JSON.stringify(claims));
+  localStorage.setItem(BOARD_KEY, JSON.stringify(perfs));
+  localStorage.setItem(ADV_KEY, JSON.stringify({ semi: advSemi, final: advFinal }));
+  localStorage.setItem(FOOD_KEY, JSON.stringify(food));
+}
+
+async function loadRemote() {
+  const s = await api("state");
+  claims = s.claims; perfs = s.performances;
+  advSemi = s.settings.advSemi; advFinal = s.settings.advFinal;
+  food = s.food;
+}
+
+function renderAll() { renderSongs(); renderBoard(); renderFood(); }
+
+async function refresh() {
+  if (ONLINE) { try { await loadRemote(); } catch (e) {} }
+  renderAll();
+}
+
+async function mutate(fn) {
+  try { await fn(); }
+  catch (e) { alert(e.status === 401 ? "Not authorized — check the admin passcode." : "Save failed — check connection."); }
+  await refresh();
+}
+
+// ---------- Song claiming ----------
 const songList = document.getElementById("songList");
 const claimCount = document.getElementById("claimCount");
 
@@ -498,25 +586,29 @@ function renderSongs() {
   const f = document.getElementById("songSearch").value.toLowerCase();
   const dv = document.getElementById("songDivFilter").value;
   songList.innerHTML = "";
-  let shown = 0;
   SONGS.forEach(([title, artist, tag], i) => {
     if (f && !title.toLowerCase().includes(f) && !artist.toLowerCase().includes(f)) return;
     if (dv && tag !== dv) return;
-    shown++;
     const div = document.createElement("div");
     div.className = "song" + (claims[i] ? " claimed" : "");
-    const sel = document.createElement("select");
-    sel.innerHTML = `<option value="">Claim...</option>` +
-      MONTHS.map(m => `<option ${claims[i] === m ? "selected" : ""}>${m}</option>`).join("");
-    sel.addEventListener("change", () => {
-      if (sel.value) claims[i] = sel.value; else delete claims[i];
-      localStorage.setItem(CLAIM_KEY, JSON.stringify(claims));
-      renderSongs();
-    });
     div.innerHTML = `<span class="num">${i + 1}</span><div class="meta"><div class="title">${title} <span class="tag tag-${tag}">${TAGS[tag]}</span></div><div class="artist">${artist}</div></div>
       <a class="ytlink" target="_blank" title="Find karaoke versions on YouTube"
          href="https://www.youtube.com/results?search_query=${encodeURIComponent(title + " " + artist + " karaoke")}">Karaoke&nbsp;&#8599;</a>`;
-    div.appendChild(sel);
+    if (ADMIN) {
+      const sel = document.createElement("select");
+      sel.innerHTML = `<option value="">Claim...</option>` +
+        MONTHS.map(m => `<option ${claims[i] === m ? "selected" : ""}>${m}</option>`).join("");
+      sel.addEventListener("change", () => mutate(() =>
+        ONLINE ? api("claim", { method: "POST", body: { index: i, month: sel.value } })
+               : Promise.resolve().then(() => { sel.value ? claims[i] = sel.value : delete claims[i]; saveLocal(); })
+      ));
+      div.appendChild(sel);
+    } else {
+      const sp = document.createElement("span");
+      sp.className = "claimlabel";
+      sp.textContent = claims[i] || "Available";
+      div.appendChild(sp);
+    }
     songList.appendChild(div);
   });
   claimCount.textContent = `${Object.keys(claims).length} / ${SONGS.length} claimed`;
@@ -525,44 +617,31 @@ function renderSongs() {
 document.getElementById("songSearch").addEventListener("input", renderSongs);
 document.getElementById("songDivFilter").addEventListener("change", renderSongs);
 document.getElementById("clearClaims").addEventListener("click", () => {
-  if (confirm("Clear all song claims?")) {
-    claims = {};
-    localStorage.setItem(CLAIM_KEY, "{}");
-    renderSongs();
-  }
+  if (confirm("Clear all song claims?")) mutate(async () => {
+    if (ONLINE) for (const k of Object.keys(claims)) await api("claim", { method: "POST", body: { index: +k, month: "" } });
+    else { claims = {}; saveLocal(); }
+  });
 });
-renderSongs();
 
 // ---------- Tally board ----------
-const BOARD_KEY = "dg_tally";
-const ADV_KEY = "dg_advancing";
-const ROUNDS = { R1: "Round 1 – Preliminaries", R2: "Round 2 – Semifinals", R3: "Finals" };
-const ROUND_SHORT = { R1: "Prelims", R2: "Semis", R3: "Finals" };
-let perfs = JSON.parse(localStorage.getItem(BOARD_KEY) || "[]");
-perfs.forEach(p => { if (!p.round) p.round = "R1"; });
-let adv = JSON.parse(localStorage.getItem(ADV_KEY) || "{}");
-if (typeof adv !== "object" || adv === null) adv = {};
-let advSemi = adv.semi || 6, advFinal = adv.final || 3;
-
 const bMonth = document.getElementById("bMonth");
 bMonth.innerHTML = MONTHS.map(m => `<option>${m}</option>`).join("");
 
-function wireAdv(id, key, def) {
+function wireAdv(id, key) {
   const el = document.getElementById(id);
-  el.value = def;
   el.addEventListener("change", () => {
-    const v = Math.max(1, Math.min(12, parseInt(el.value.replace(/\D/g, "")) || def));
+    const v = Math.max(1, Math.min(12, parseInt(el.value.replace(/\D/g, "")) || 1));
     el.value = v;
-    adv[key] = v;
-    localStorage.setItem(ADV_KEY, JSON.stringify(adv));
-    if (key === "semi") advSemi = v; else advFinal = v;
-    renderBoard();
+    mutate(() => ONLINE ? api("settings", { method: "POST", body: { key, value: v } })
+                        : Promise.resolve().then(() => { if (key === "advSemi") advSemi = v; else advFinal = v; saveLocal(); }));
   });
 }
-wireAdv("advSemi", "semi", advSemi);
-wireAdv("advFinal", "final", advFinal);
+wireAdv("advSemi", "advSemi");
+wireAdv("advFinal", "advFinal");
 
 function renderBoard() {
+  document.getElementById("advSemi").value = advSemi;
+  document.getElementById("advFinal").value = advFinal;
   const tbody = document.querySelector("#perfTable tbody");
   tbody.innerHTML = "";
   perfs.forEach((p, i) => {
@@ -570,10 +649,15 @@ function renderBoard() {
     tr.innerHTML = `<td>${i + 1}</td><td>${ROUND_SHORT[p.round]}</td><td>${p.month}</td><td>${p.cat}</td><td>${p.song || "—"}</td>
       <td>${p.judges}</td><td>${p.votes}</td><td><strong>${p.judges + p.votes}</strong></td>`;
     const td = document.createElement("td");
-    const btn = document.createElement("button");
-    btn.className = "del"; btn.textContent = "✕";
-    btn.onclick = () => { perfs.splice(i, 1); saveBoard(); };
-    td.appendChild(btn); tr.appendChild(td);
+    if (ADMIN) {
+      const btn = document.createElement("button");
+      btn.className = "del"; btn.textContent = "✕";
+      btn.onclick = () => mutate(() =>
+        ONLINE ? api("performance?id=" + p.id, { method: "DELETE" })
+               : Promise.resolve().then(() => { perfs.splice(i, 1); saveLocal(); }));
+      td.appendChild(btn);
+    }
+    tr.appendChild(td);
     tbody.appendChild(tr);
   });
 
@@ -633,34 +717,29 @@ function renderBoard() {
   });
 }
 
-function saveBoard() {
-  localStorage.setItem(BOARD_KEY, JSON.stringify(perfs));
-  renderBoard();
-}
-
 document.getElementById("bAdd").addEventListener("click", () => {
   const votes = parseInt(document.getElementById("bVotes").value.replace(/\D/g, "")) || 0;
   const judges = Math.min(100, parseInt(document.getElementById("bJudges").value.replace(/\D/g, "")) || 0);
-  perfs.push({
+  const p = {
     round: document.getElementById("bRound").value,
     month: bMonth.value,
     cat: document.getElementById("bCat").value,
     song: document.getElementById("bSong").value.trim(),
     judges, votes
-  });
+  };
   document.getElementById("bSong").value = "";
   document.getElementById("bVotes").value = "";
   document.getElementById("bJudges").value = "";
-  saveBoard();
+  mutate(() => ONLINE ? api("performance", { method: "POST", body: p })
+                      : Promise.resolve().then(() => { perfs.push(p); saveLocal(); }));
 });
 
 document.getElementById("resetBoard").addEventListener("click", () => {
-  if (confirm("Erase all performances and standings?")) {
-    perfs = [];
-    saveBoard();
-  }
+  if (confirm("Erase all performances and standings?")) mutate(async () => {
+    if (ONLINE) for (const p of perfs) await api("performance?id=" + p.id, { method: "DELETE" });
+    else { perfs = []; saveLocal(); }
+  });
 });
-renderBoard();
 
 // ---------- Registration sheets ----------
 const regRows = document.getElementById("regRows");
@@ -686,32 +765,6 @@ document.getElementById("printReg").addEventListener("click", () => {
 window.addEventListener("afterprint", () => document.body.classList.remove("regonly"));
 
 // ---------- Food & beverage coordination ----------
-const FOOD_KEY = "dg_food";
-const FOOD_STATUS = ["Needed", "Sourcing", "Ready"];
-const DEFAULT_FOOD = [
-  "Soft drinks (assorted)", "Juices / juice boxes", "Bottled water", "Ice",
-  "Cups", "Napkins", "Plates",
-  "Hot dogs + buns", "Hamburgers + buns", "Veggie burgers + buns", "Burger toppings (lettuce, tomato, onion, cheese)", "Ketchup / mustard / relish",
-  "Fish cakes", "Samosas",
-  "Chicken wings — fried", "Chicken wings — BBQ + sauce",
-  "Serving trays", "Tongs & food gloves", "Warming trays / chafing dishes",
-  "Tablecloths", "Trash bags", "Cash box + change for food sales"
-];
-let food = JSON.parse(localStorage.getItem(FOOD_KEY) || "null");
-if (!Array.isArray(food)) {
-  food = DEFAULT_FOOD.map(item => ({ item, qty: "", source: "", prep: "", serve: "", status: "Needed" }));
-} else {
-  DEFAULT_FOOD.forEach(item => {
-    if (!food.some(r => r.item === item)) {
-      food.push({ item, qty: "", source: "", prep: "", serve: "", status: "Needed" });
-    }
-  });
-}
-
-function saveFood() {
-  localStorage.setItem(FOOD_KEY, JSON.stringify(food));
-}
-
 function renderFood() {
   const tbody = document.querySelector("#foodTable tbody");
   tbody.innerHTML = "";
@@ -720,22 +773,31 @@ function renderFood() {
     [["item", "Item"], ["qty", "—"], ["source", "Name…"], ["prep", "Name…"], ["serve", "Name…"]].forEach(([k, ph]) => {
       const td = document.createElement("td");
       const inp = document.createElement("input");
-      inp.value = row[k];
+      inp.value = row[k] || "";
       inp.placeholder = ph;
-      inp.addEventListener("input", () => { food[i][k] = inp.value; saveFood(); });
+      inp.addEventListener("change", () => mutate(() =>
+        ONLINE && row.id ? api("food", { method: "PUT", body: { id: row.id, [k]: inp.value } })
+                         : Promise.resolve().then(() => { row[k] = inp.value; saveLocal(); })
+      ));
       td.appendChild(inp);
       tr.appendChild(td);
     });
     const tdS = document.createElement("td");
     const sel = document.createElement("select");
     sel.innerHTML = FOOD_STATUS.map(s => `<option ${row.status === s ? "selected" : ""}>${s}</option>`).join("");
-    sel.addEventListener("change", () => { row.status = sel.value; saveFood(); });
+    sel.addEventListener("change", () => mutate(() =>
+      ONLINE && row.id ? api("food", { method: "PUT", body: { id: row.id, status: sel.value } })
+                       : Promise.resolve().then(() => { row.status = sel.value; saveLocal(); })
+    ));
     tdS.appendChild(sel);
     tr.appendChild(tdS);
     const td = document.createElement("td");
     const btn = document.createElement("button");
     btn.className = "del"; btn.textContent = "✕";
-    btn.onclick = () => { food.splice(i, 1); saveFood(); renderFood(); };
+    btn.onclick = () => mutate(() =>
+      ONLINE && row.id ? api("food?id=" + row.id, { method: "DELETE" })
+                       : Promise.resolve().then(() => { food.splice(i, 1); saveLocal(); })
+    );
     td.appendChild(btn); tr.appendChild(td);
     tbody.appendChild(tr);
   });
@@ -744,11 +806,11 @@ function renderFood() {
 document.getElementById("fAdd").addEventListener("click", () => {
   const item = document.getElementById("fItem").value.trim();
   if (!item) return;
-  food.push({ item, qty: document.getElementById("fQty").value.trim(), source: "", prep: "", serve: "", status: "Needed" });
+  const qty = document.getElementById("fQty").value.trim();
   document.getElementById("fItem").value = "";
   document.getElementById("fQty").value = "";
-  saveFood();
-  renderFood();
+  mutate(() => ONLINE ? api("food", { method: "POST", body: { item, qty } })
+                      : Promise.resolve().then(() => { food.push({ item, qty, source: "", prep: "", serve: "", status: "Needed" }); saveLocal(); }));
 });
 
 document.getElementById("printFood").addEventListener("click", () => {
@@ -756,7 +818,26 @@ document.getElementById("printFood").addEventListener("click", () => {
   window.print();
 });
 window.addEventListener("afterprint", () => document.body.classList.remove("foodonly"));
-renderFood();
+
+// ---------- boot ----------
+(async () => {
+  try { await loadRemote(); ONLINE = true; } catch (e) { loadLocal(); }
+  if (ONLINE) {
+    document.getElementById("livePill").style.display = "";
+    if (wantAdmin) {
+      if (!ADMIN_KEY) ADMIN_KEY = (prompt("Admin passcode:") || "").trim();
+      if (ADMIN_KEY) {
+        try { await api("ping"); ADMIN = true; sessionStorage.setItem("dg_admin_key", ADMIN_KEY); }
+        catch (e) { alert("Incorrect passcode — showing public view."); ADMIN_KEY = ""; sessionStorage.removeItem("dg_admin_key"); }
+      }
+    }
+    setInterval(async () => { try { await loadRemote(); renderAll(); } catch (e) {} }, 15000);
+  } else {
+    ADMIN = true; // standalone copy — everything saves in this browser
+  }
+  if (ADMIN) document.body.classList.add("admin");
+  renderAll();
+})();
 </script>
 </body>
 </html>

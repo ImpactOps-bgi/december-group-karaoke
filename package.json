@@ -1,0 +1,13 @@
+{
+  "name": "december-group-karaoke",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "test": "node --test tests/api.test.js"
+  },
+  "dependencies": {
+    "@netlify/database": "^2.0.1",
+    "@netlify/neon": "^0.1.2"
+  }
+}
